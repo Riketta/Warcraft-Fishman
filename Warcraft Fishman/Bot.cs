@@ -20,7 +20,7 @@ namespace Fishman
         const int ScanningRetries = 4;
         const int ScanningSteps = 10;
         const int ScanningDelay = 25; // 1000 / ScanningDelay = Minimum required FPS
-        const int BobberHorizontalOffset = 10; // used to reduce fails caused by feathers
+        const int BobberHorizontalOffset = 12; // used to reduce fails caused by feathers
 
         /// <summary>
         /// Fishman bot main class
@@ -163,7 +163,7 @@ namespace Fishman
 
         Rectangle GetBobberSize()
         {
-            const int step = 3;
+            const int step = 4;
 
             Point pos = DeviceManager.GetMousePosition();
             Rectangle result = new Rectangle(pos, new Size(0, 0));
