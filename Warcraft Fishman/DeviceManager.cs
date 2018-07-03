@@ -22,8 +22,8 @@ namespace Fishman
 
         public static void LoadCursors()
         {
-            IconDefault = Bitmap.FromFile(IconFileDefault) as Bitmap;
-            IconFishhook = Bitmap.FromFile(IconFileFishhook) as Bitmap;
+            IconDefault = Image.FromFile(IconFileDefault) as Bitmap;
+            IconFishhook = Image.FromFile(IconFileFishhook) as Bitmap;
         }
 
         public static Bitmap GetCurrentIcon()
