@@ -11,6 +11,7 @@ It works well and have pretty high accuracy. Uses presets to manage different ac
 - Use "Oversized Bobber" if you fishing pools, but default bobber have a bit higher accuracy in water without pools
 - Bobber should stay in front of pool on its border (closer to you), because little fishes have higher priority for cursor targeting and bot can't detect bobbers positioning.
 - Water horizont (absolute, like in ocean) should be around 20-25% from top
+- Have SpellQueueWindow 100 or higher (check it with "/dump GetCVar("SpellQueueWindow")" and set with "/console SpellQueueWindow 200")
 - Have at least 50 FPS
 
 ## Presets
@@ -32,7 +33,7 @@ It works well and have pretty high accuracy. Uses presets to manage different ac
 - **Key**: any key from https://www.pinvoke.net/default.aspx/Enums.VirtualKeys in string representation. For example: N1, N2, Q, E, F3, Numpad1
 - **Trigger**: one of events described earlier
 - **GCD**: global spell cooldown in milliseconds. Default 1500. Recommended to use default value. Default value for Fish event 300
-- **CastTime**: spell cast time in milliseconds. 0 means instant
+- **CastTime**: spell cast time in milliseconds. 0 means instant. **Be careful**: some spells have GCD after cast, so you have to add this values into CastTime (look how Oversized Bobber works in this way)
 - **Interval**: inverval in seconds between action calls. Used only with Interval event type.
 
 ### Example (Data\Main.json)
