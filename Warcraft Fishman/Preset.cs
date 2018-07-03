@@ -20,7 +20,7 @@ namespace Fishman
         static Preset()
         {
             Default.Actions.Add(Action.Fish);
-            Default.Actions.Add(new Action() { Key = WinApi.VirtualKeys.N2, CastTime = 2, Description = "Oversized Bobber", Trigger = Action.Event.Interval, Interval = 30 * 60 });
+            Default.Actions.Add(new Action() { Key = WinApi.VirtualKeys.N2, CastTime = 2000, Description = "Oversized Bobber", Trigger = Action.Event.Interval, Interval = 30 * 60 });
         }
 
         /// <summary>

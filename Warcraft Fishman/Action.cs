@@ -92,7 +92,7 @@ namespace Fishman
         {
             if (Trigger != Event.Fish)
             {
-                int sleep = GCD + CastTime;
+                int sleep = Math.Max(GCD, CastTime);
                 logger.Info("Waiting for {0} milliseconds", sleep);
                 Thread.Sleep(sleep);
             }
