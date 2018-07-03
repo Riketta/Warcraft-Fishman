@@ -22,6 +22,9 @@ namespace Fishman
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, UInt32 Msg, UInt32 wParam, IntPtr lParam);
 
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr DeleteDC(IntPtr hDC);
+
         public const UInt32 WM_KEYDOWN = 0x0100;
         public const UInt32 WM_KEYUP = 0x0101;
         public const UInt32 WM_LBUTTONDOWN = 0x0201;

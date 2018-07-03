@@ -28,15 +28,22 @@ namespace Fishman
 
         public static Bitmap GetCurrentIcon()
         {
+            Bitmap cursorIcon = null;
+
             WinApi.CURSORINFO pci;
             pci.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(WinApi.CURSORINFO));
 
-            Bitmap cursor = new Bitmap(32, 32);
             if (WinApi.GetCursorInfo(out pci))
-                using (Graphics g = Graphics.FromImage(cursor))
-                    WinApi.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
+            {
+                using (var icon = new Bitmap(32, 32))
+                {
+                    using (Graphics g = Graphics.FromImage(icon))
+                        WinApi.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
+                    cursorIcon = new Bitmap(icon);
+                }
+            }
 
-            return cursor;
+            return cursorIcon;
         }
 
         public static bool CompareIcons(Bitmap a, Bitmap b)
