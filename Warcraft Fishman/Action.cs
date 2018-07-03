@@ -72,11 +72,12 @@ namespace Fishman
 
                 case Event.Interval:
                     // if action already should be called or if it should be called while next fishing action - call it now
-                    if (DateTime.Now.AddMilliseconds(Fish.CastTime) > LastInvoke.AddSeconds(Interval))
+                    if (DateTime.Now.AddMilliseconds(Fish.CastTime) > LastInvoke.AddSeconds(Interval)) // won't work if Intercal == Cooldown
                     {
                         logger.Info("Calling event");
                         PressKey(hWnd);
                         Sleep();
+                        LastInvoke = DateTime.Now;
                     }
                     break;
 
@@ -84,8 +85,6 @@ namespace Fishman
                 default:
                     throw new Exception("Invalid trigger type to invoke current action");
             }
-
-            LastInvoke = DateTime.Now;
         }
 
         private void Sleep()
