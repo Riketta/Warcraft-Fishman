@@ -41,6 +41,9 @@ namespace Fishman
 
         public static bool CompareIcons(Bitmap a, Bitmap b)
         {
+            if ((a == null && b != null) || (a != null && b == null))
+                return false;
+
             for (int x = 0; x < 5; x++)
                 for (int y = 0; y < 5; y++)
                     if (a.GetPixel(x, y) != b.GetPixel(x, y))
