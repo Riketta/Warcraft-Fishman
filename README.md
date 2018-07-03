@@ -53,32 +53,25 @@ It works well and have pretty high accuracy. Uses presets to manage different ac
       "Description": "Oversized Bobber",
       "Key": "N2",
       "Trigger": "Interval",
-      "GCD": 1500,
-      "CastTime": 1500,
+      "CastTime": 3000,
       "Interval": 1800
     },
 	{
       "Description": "Arcane Lure",
       "Key": "N3",
       "Trigger": "Interval",
-      "GCD": 1500,
-      "CastTime": 0,
       "Interval": 600
     },
 	{
       "Description": "Ancient Vrykul Ring",
       "Key": "N4",
       "Trigger": "Interval",
-      "GCD": 1500,
-      "CastTime": 2,
       "Interval": 1800
     },
 	{
       "Description": "Throw Oodelfjisk",
       "Key": "N5",
       "Trigger": "PostFish",
-      "GCD": 1500,
-      "CastTime": 0,
     }
   ]
 }
