@@ -39,7 +39,7 @@ namespace Fishman
                 {
                     using (Graphics g = Graphics.FromImage(icon))
                         WinApi.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
-                    cursorIcon = new Bitmap(icon);
+                    cursorIcon = new Bitmap(icon); // We have to "clone" icon because handle won't be released if we continue use it
                 }
             }
 
