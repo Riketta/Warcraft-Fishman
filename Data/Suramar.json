@@ -1,0 +1,42 @@
+{
+  "Name": "Suramar",
+  "Actions": [
+    {
+      "Description": "Fishing",
+      "Key": "N1",
+      "Trigger": "Fish",
+      "GCD": 300,
+      "CastTime": 22000,
+      "Interval": 0
+    },
+    {
+      "Description": "Leyscale Koi",
+      "Key": "N2",
+      "Trigger": "Interval",
+      "Interval": 180
+    },
+	{
+      "Description": "Arcane Lure",
+      "Key": "N3",
+      "Trigger": "Interval",
+      "Interval": 600
+    },
+	{
+      "Description": "Suramar lures",
+      "Key": "N4",
+      "Trigger": "Interval",
+      "Interval": 240
+    },
+	{
+      "Description": "Throw Fish",
+      "Key": "N5",
+      "Trigger": "PostFish",
+    },
+	{
+      "Description": "Remove Trash",
+      "Key": "N6",
+      "Trigger": "Interval",
+      "Interval": 480
+    }
+  ]
+}

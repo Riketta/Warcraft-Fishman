@@ -88,6 +88,36 @@ Capture by yourself fishing icon (fishhook) and default icon (hand), and save it
 * --help: display help screen.
 * --version: display version information.
 
+## Useful marco
+### Remove all gray items
+~~~
+/run for bag = 0, 4 do for slot = 1, GetContainerNumSlots(bag) do local name = GetContainerItemLink(bag,slot) if name and string.find(name,"ff9d9d9d") then PickupContainerItem(bag,slot) DeleteCursorItem() end end end
+~~~
+### Throw all Legion rare fish
+~~~
+/use item:139661
+/use item:139668
+/use item:139654
+/use item:139667
+/use item:139663
+/use item:139662
+/use item:139666
+/use item:139653
+/use item:139669
+/use item:139660
+/use item:139656
+/use item:139655
+/use item:139659
+/use item:139652
+/use item:139664
+~~~
+### Use Suramar lures
+~~~
+/cast item:133720
+/cast item:133717
+~~~
+
+
 ## Author
 Developed by Riketta (rowneg@bk.ru / github.com/riketta).  
 Based on https://github.com/trenus/Bots.WoW.Fishing by Trenus.  
