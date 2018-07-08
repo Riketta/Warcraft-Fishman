@@ -1,5 +1,5 @@
 {
-  "Name": "Suramar",
+  "Name": "Valsharah",
   "Actions": [
     {
       "Description": "Fishing",
@@ -8,12 +8,6 @@
       "GCD": 300,
       "CastTime": 22000,
       "Interval": 0
-    },
-    {
-      "Description": "Leyscale Koi",
-      "Key": "N2",
-      "Trigger": "Interval",
-      "Interval": 180
     },
 	{
       "Description": "Arcane Lure",
@@ -25,7 +19,7 @@
       "Description": "Lures",
       "Key": "N4",
       "Trigger": "Interval",
-      "Interval": 240
+      "Interval": 720
     },
 	{
       "Description": "Throw Fish",
