@@ -4,15 +4,17 @@ Simple fishing bot that emulates user input via keyboard and mouse. No injection
 It works well and have pretty high accuracy. Uses presets to manage different actions.
 
 ## Recomendations
-- Game should be launched in windowed fullscreen mode
-- Use first person view camera
+- **Game should be launched in windowed fullscreen mode**
+- **Use first person view camera**
 - Also absence of other selectable objects (NPCs, for example) in background would be good, but not necessary
 - Use default GCD = 1500 for each action in your presets (except fishing action, it has 300 ms GCD)
 - Use "Oversized Bobber" if you fishing pools, but default bobber have a bit higher accuracy in water without pools
 - Bobber should stay in front of pool on its border (closer to you), because little fishes have higher priority for cursor targeting and bot can't detect bobbers positioning.
 - Water horizont (absolute, like in ocean) should be around 20-25% from top
+- **Stay on water level (in ideal - stay on water)**
+- **Use symmetric bobber toy**
 - Have SpellQueueWindow 100 or higher (check it with "/dump GetCVar("SpellQueueWindow")" and set with "/console SpellQueueWindow 200")
-- Have at least 50 FPS
+- **Have at least 50 FPS**
 
 ## Presets
 ### Preset configuration:  
