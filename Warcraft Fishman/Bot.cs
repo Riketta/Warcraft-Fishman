@@ -116,7 +116,7 @@ namespace Fishman
             logger.Info("Mouse click");
             DeviceManager.MouseClickLMB(handle);
             logger.Info("Loot delay");
-            Thread.Sleep(600);
+            Thread.Sleep(1000);
 
             return true;
         }
