@@ -1,0 +1,33 @@
+{
+  "Name": "Suramar",
+  "Actions": [
+    {
+      "Description": "Fishing",
+      "Key": "N1",
+      "Trigger": "Fish",
+      "GCD": 300,
+      "CastTime": 22000,
+      "Interval": 0
+    },
+    {
+      "Description": "Bobber Toy",
+      "Key": "N2",
+      "Trigger": "Interval",
+      "Interval": 1800
+    },
+	{
+	  "_comment": "/use item:127141",
+      "Description": "Bloated Thresher",
+      "Key": "N3",
+      "Trigger": "Interval",
+      "Interval": 180
+    },
+	{
+	  "_comment": "/run for b = 0,4 do for s = 1,GetContainerNumSlots(b) do local l = GetContainerItemLink(b,s); if l and string.find(l, tostring(124670)) then PickupContainerItem(b,s); DeleteCursorItem(); end; end; end",
+      "Description": "Delete Boxes",
+      "Key": "N4",
+      "Trigger": "Interval",
+      "Interval": 480
+    }
+  ]
+}
