@@ -23,13 +23,13 @@ namespace Fishman
             Arguments arguments = null;
             var result = Parser.Default.ParseArguments<Arguments>(args).WithParsed(opts => arguments = opts);
 
-            if (arguments != null && arguments.IsDump)
+            if (arguments.IsDump)
             {
                 logger.Info("Launching in dump mode");
                 DeviceManager.DumpIconsLoop();
             }
 
-            if (arguments != null && arguments.IsSave)
+            if (arguments.IsSave)
             {
                 logger.Info("Saving default preset into file");
                 Preset.Default.Save();
@@ -39,7 +39,7 @@ namespace Fishman
             DeviceManager.LoadCursors();
 
             Preset preset = Preset.Default;
-            if (arguments == null || string.IsNullOrEmpty(arguments.Preset))
+            if (string.IsNullOrEmpty(arguments.Preset))
                 logger.Info("No preset selected. Using default");
             else
             {
