@@ -15,6 +15,9 @@ namespace Fishman
         [Option('p', "preset", HelpText = "Path to selected preset. Example: margoss.json")]
         public string Preset { get; set; }
 
+        [Option('o', "offset", HelpText = "Use few pixels offset to left. Useful with default bobber.")]
+        public bool Offset { get; set; }
+
         [Option('d', "dump", HelpText = "Runs in dump mode. Use it alone.")]
         public bool IsDump { get; set; }
     }

@@ -20,7 +20,9 @@ namespace Fishman
         const int ScanningRetries = 4;
         const int ScanningSteps = 10;
         const int ScanningDelay = 25; // 1000 / ScanningDelay = Minimum required FPS
-        const int BobberHorizontalOffset = 12; // used to reduce fails caused by feathers
+
+        public bool UseOffset = false;
+        const int BobberHorizontalOffset = 12; // used to reduce fails caused by default bobber feathers
 
         /// <summary>
         /// Fishman bot main class
@@ -205,7 +207,7 @@ namespace Fishman
 
 
             // ### move to horizontal center of bounding box ###
-            pos.X = result.X + (result.Width / 2) + BobberHorizontalOffset;
+            pos.X = result.X + (result.Width / 2) + (UseOffset ? BobberHorizontalOffset : 0);
 
             #region Bounding Box Bottom
             pos.Y = result.Bottom + step;

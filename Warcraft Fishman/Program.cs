@@ -23,8 +23,6 @@ namespace Fishman
             Arguments arguments = null;
             var result = Parser.Default.ParseArguments<Arguments>(args).WithParsed(opts => arguments = opts);
 
-            if (arguments != null)
-
             if (arguments != null && arguments.IsDump)
             {
                 logger.Info("Launching in dump mode");
@@ -49,10 +47,13 @@ namespace Fishman
                 preset = Preset.Load(arguments.Preset);
             }
 
+            logger.Info("Using bobber offset: {0}", arguments.Offset);
+            
             logger.Info("Ready to start fishing with selected preset: {0}", preset);
             logger.Info("Press \"Enter\" to start");
             Console.ReadLine();
             Bot fishman = new Bot(preset);
+            fishman.UseOffset = arguments.Offset;
             fishman.FishingLoop();
 
             while (true);
