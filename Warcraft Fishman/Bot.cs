@@ -68,8 +68,15 @@ namespace Fishman
                     action.Invoke(handle);
 
                 logger.Info("Starting fishing");
-                while (!Fishing(preset.GetActions(Action.Event.Fish)[0]))
-                    logger.Warn("Starting fishing again");
+                try
+                {
+                    while (!Fishing(preset.GetActions(Action.Event.Fish)[0]))
+                        logger.Warn("Starting fishing again");
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Exception occured while fishing: " + ex.ToString());
+                }
 
                 logger.Info("Invoking post-fishing actions");
                 foreach (var action in preset.GetActions(Action.Event.PostFish))
