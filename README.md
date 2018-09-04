@@ -79,6 +79,10 @@ It works well and have pretty high accuracy. Uses presets to manage different ac
 }
 ~~~~
 
+## TODO:
+* External config
+* Option to swap LMB and RMB 
+
 ## Dump mode (--dump)
 Saves icons once per second.  
 Capture by yourself fishing icon (fishhook) and default icon (hand), and save it as **fishhook.bmp** and **default.bmp**.  
