@@ -137,10 +137,10 @@ namespace Fishman
             Screen screen = Screen.PrimaryScreen;
             Point pos = new Point();
 
-            int xMin = screen.Bounds.Width / 4;
-            int xMax = xMin * 3;
-            int yMin = screen.Bounds.Height / 5;
-            int yMax = yMin * 3;
+            int xMin = screen.Bounds.Width / 3;
+            int xMax = xMin * 2;
+            int yMin = screen.Bounds.Height / 4;
+            int yMax = yMin * 2;
 
             int xStep = ((xMax - xMin) / ScanningSteps);
             int yStep = ((yMax - yMin) / ScanningSteps);
