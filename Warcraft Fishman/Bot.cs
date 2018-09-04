@@ -114,8 +114,10 @@ namespace Fishman
                 return false;
 
             logger.Info("Waiting bobber to stop");
-            Thread.Sleep(250);
-            logger.Info("Mouse click");
+            Thread.Sleep(200);
+            DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
+            Thread.Sleep(100);
+            logger.Info("Mouse LMB click");
             DeviceManager.MouseClickLMB(handle);
             logger.Info("Loot delay");
             Thread.Sleep(1000);
