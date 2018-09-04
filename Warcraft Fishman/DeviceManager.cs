@@ -92,9 +92,9 @@ namespace Fishman
         /// <param name="hWnd">Window handle to send key to</param>
         public static void MouseClickLMB(IntPtr hWnd)
         {
-            WinApi.PostMessage(hWnd, WinApi.WM_LBUTTONDOWN, (UInt32)WinApi.VirtualKeys.LeftButton, IntPtr.Zero);
-            Thread.Sleep(50 + random.Next(-10, 10));
-            WinApi.PostMessage(hWnd, WinApi.WM_LBUTTONUP, (UInt32)WinApi.VirtualKeys.LeftButton, IntPtr.Zero);
+            WinApi.mouse_event(WinApi.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, UIntPtr.Zero);
+            Thread.Sleep(70 + random.Next(-10, 10));
+            WinApi.mouse_event(WinApi.MOUSEEVENTF_RIGHTUP, 0, 0, 0, UIntPtr.Zero);
         }
 
         public static Point GetMousePosition()
@@ -105,7 +105,6 @@ namespace Fishman
         public static void MoveMouse(Point position)
         {
             System.Windows.Forms.Cursor.Position = position;
-
         }
 
     }
