@@ -125,7 +125,7 @@ namespace Fishman
             DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
             Thread.Sleep(100);
             logger.Info("Mouse LMB click");
-            DeviceManager.MouseClickLMB(handle);
+            DeviceManager.MouseClick(handle);
             logger.Info("Loot delay");
             Thread.Sleep(1300);
 

@@ -87,14 +87,14 @@ namespace Fishman
         }
 
         /// <summary>
-        /// Simulate left mouse button click
+        /// Simulate left or right mouse button click
         /// </summary>
         /// <param name="hWnd">Window handle to send key to</param>
-        public static void MouseClickLMB(IntPtr hWnd)
+        public static void MouseClick(IntPtr hWnd, bool invert = false)
         {
-            WinApi.mouse_event(WinApi.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, UIntPtr.Zero);
-            Thread.Sleep(70 + random.Next(-10, 10));
-            WinApi.mouse_event(WinApi.MOUSEEVENTF_RIGHTUP, 0, 0, 0, UIntPtr.Zero);
+            WinApi.mouse_event((invert ? WinApi.MOUSEEVENTF_RIGHTDOWN : WinApi.MOUSEEVENTF_LEFTDOWN), 0, 0, 0, UIntPtr.Zero);
+            Thread.Sleep(70 + random.Next(-12, 12));
+            WinApi.mouse_event((invert ? WinApi.MOUSEEVENTF_RIGHTUP : WinApi.MOUSEEVENTF_LEFTUP), 0, 0, 0, UIntPtr.Zero);
         }
 
         public static Point GetMousePosition()
