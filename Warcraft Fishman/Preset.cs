@@ -44,7 +44,12 @@ namespace Fishman
                 logger.Error("More than one fishing actions found!");
                 return false;
             }
-            
+            if (GetActions(Action.Event.Fish).Length == 0)
+            {
+                logger.Error("No fishing actions found!");
+                return false;
+            }
+
             // TODO: Key collision detection
 
             return true;
