@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,14 +17,28 @@ namespace Fishman
 
         public static readonly string IconFileDefault = "default.bmp";
         public static readonly string IconFileFishhook = "fishhook.bmp";
+        public static readonly string IconFileFishhookClassic = "fishhook_classic.bmp";
 
         public static Bitmap IconDefault;
         public static Bitmap IconFishhook;
+        public static Bitmap IconFishhookClassic;
 
         public static void LoadCursors()
         {
-            IconDefault = Image.FromFile(IconFileDefault) as Bitmap;
-            IconFishhook = Image.FromFile(IconFileFishhook) as Bitmap;
+            if (File.Exists(IconFileDefault))
+                IconDefault = Image.FromFile(IconFileDefault) as Bitmap;
+            else
+                logger.Warn("Icon \"{0}\" not found", IconFileDefault);
+
+            if (File.Exists(IconFileFishhook))
+                IconFishhook = Image.FromFile(IconFileFishhook) as Bitmap;
+            else
+                logger.Warn("Icon \"{0}\" not found", IconFileFishhook);
+
+            if (File.Exists(IconFileFishhookClassic))
+                IconFishhookClassic = Image.FromFile(IconFileFishhookClassic) as Bitmap;
+            else
+                logger.Warn("Icon \"{0}\" not found", IconFileFishhookClassic);
         }
 
         public static Bitmap GetCurrentIcon()
@@ -90,6 +105,7 @@ namespace Fishman
         /// Simulate left or right mouse button click
         /// </summary>
         /// <param name="hWnd">Window handle to send key to</param>
+        /// <param name="invert">Flag to use RMB instead of LMB</param>
         public static void MouseClick(IntPtr hWnd, bool invert = false)
         {
             WinApi.mouse_event((invert ? WinApi.MOUSEEVENTF_RIGHTDOWN : WinApi.MOUSEEVENTF_LEFTDOWN), 0, 0, 0, UIntPtr.Zero);
@@ -107,5 +123,15 @@ namespace Fishman
             System.Windows.Forms.Cursor.Position = position;
         }
 
+        static public Color GetPixelColor(IntPtr hwnd, int x, int y)
+        {
+            IntPtr hdc = WinApi.GetWindowDC(hwnd);
+            uint pixel = WinApi.GetPixel(hdc, x, y);
+            WinApi.ReleaseDC(hwnd, hdc);
+            Color color = Color.FromArgb((int)(pixel & 0x000000FF),
+                            (int)(pixel & 0x0000FF00) >> 8,
+                            (int)(pixel & 0x00FF0000) >> 16);
+            return color;
+        }
     }
 }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Fishman
 {
-    class Bot
+    class ClassicBot
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -28,7 +28,7 @@ namespace Fishman
         /// Fishman bot main class
         /// </summary>
         /// <param name="preset">Actions preset that should be used for fishing</param>
-        public Bot(Preset preset)
+        public ClassicBot(Preset preset)
         {
             handle = GetWoWProcess().MainWindowHandle;
             this.preset = preset;
@@ -40,7 +40,7 @@ namespace Fishman
         /// </summary>
         public void FishingLoop()
         {
-            logger.Info("### Fishing loop started ###");
+            logger.Info("### Classic Fishing loop started ###");
             logger.Info("Looking for WoW window handle");
             logger.Debug("Handle: {0}", handle);
             SetGameWindowActive();
@@ -51,6 +51,7 @@ namespace Fishman
                 throw new Exception("Invalid preset");
             }
 
+            Action.Fish.CastTime = 60 * 1000;
             logger.Info("Invoking once-only prefishing actions");
             foreach (var action in preset.GetActions(Action.Event.Once))
                 action.Invoke(handle);
@@ -123,13 +124,11 @@ namespace Fishman
                 return false;
 
             Rectangle bobber = GetBobberSize();
-            DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom + 3));
+            DeviceManager.MoveMouse(new Point(bobber.Right - (int)(bobber.Width * 0.20f), bobber.Top + (int)(bobber.Height * 0.275f)));
 
             if (!WaitForBite(fishing.CastTime))
                 return false;
 
-            logger.Info("Waiting bobber to stop");
-            Thread.Sleep(200);
             DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
             logger.Info("Mouse click");
             DeviceManager.MouseClick(handle);
@@ -160,7 +159,7 @@ namespace Fishman
             int yStep = ((yMax - yMin) / ScanningSteps);
             int xOffSet = (xStep / ScanningRetries);
 
-            for (int ScanAttempt = 1; ScanAttempt <= ScanningRetries; ScanAttempt++)
+            for (int ScanAttempt = 0; ScanAttempt <= ScanningRetries; ScanAttempt++)
                 for (int mouseX = xMin + xOffSet * ScanAttempt; mouseX < xMax; mouseX += xStep)
                     for (int mouseY = yMin; mouseY < yMax; mouseY += yStep)
                     {
@@ -171,7 +170,7 @@ namespace Fishman
                         Thread.Sleep(ScanningDelay);
 
                         Bitmap icon = DeviceManager.GetCurrentIcon();
-                        if (DeviceManager.CompareIcons(icon, DeviceManager.IconFishhook))
+                        if (DeviceManager.CompareIcons(icon, DeviceManager.IconFishhookClassic))
                             return true;
                     }
 
@@ -181,65 +180,75 @@ namespace Fishman
 
         Rectangle GetBobberSize()
         {
-            const int step = 4;
+            const int step = 1;
 
-            Point pos = DeviceManager.GetMousePosition();
-            Rectangle result = new Rectangle(pos, new Size(0, 0));
+            Point cursor = DeviceManager.GetMousePosition();
+            Rectangle bobber = new Rectangle(0, 0, 0, 0);
 
+            // HORIZONTAL
+            cursor.Y += 3 * step;
+            DeviceManager.MoveMouse(cursor);
+            Thread.Sleep(ScanningDelay);
+
+            #region Left Bound
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhookClassic))
+            {
+                cursor.X -= step;
+                DeviceManager.MoveMouse(cursor);
+                Thread.Sleep(ScanningDelay);
+            }
+            cursor.X += step;
+            DeviceManager.MoveMouse(cursor);
+            Thread.Sleep(ScanningDelay);
+            #endregion
+            bobber.X = cursor.X;
             
-            #region Bounding Box Left Side
-            pos.X -= step;
-            DeviceManager.MoveMouse(pos);
-            Thread.Sleep(ScanningDelay);
-
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            #region Right Bound
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhookClassic))
             {
-                pos.X -= step;
-                DeviceManager.MoveMouse(pos);
+                cursor.X += step;
+                DeviceManager.MoveMouse(cursor);
                 Thread.Sleep(ScanningDelay);
             }
-
-            // -- undo last step since is not on bobber anymore
-            pos.X += step;
-
-            // -- resize/reposition result to account for known bobber size
-            result.Width = result.X - pos.X;
-            result.X = pos.X;
+            cursor.X -= step;
+            DeviceManager.MoveMouse(cursor);
+            Thread.Sleep(ScanningDelay);
             #endregion
+            bobber.Width = cursor.X - bobber.X;
 
-            #region Bounding Box Right Side
-            pos.X = result.Right + step;
-            DeviceManager.MoveMouse(pos);
+            //  VERTICAL
+
+            cursor.X = bobber.X + bobber.Width / 2;
+            DeviceManager.MoveMouse(cursor);
             Thread.Sleep(ScanningDelay);
 
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            #region Top Bound
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhookClassic))
             {
-                pos.X += step;
-                DeviceManager.MoveMouse(pos);
+                cursor.Y -= step;
+                DeviceManager.MoveMouse(cursor);
                 Thread.Sleep(ScanningDelay);
             }
-            result.Width = pos.X - result.X;
-            #endregion
-
-
-            // ### move to horizontal center of bounding box ###
-            pos.X = result.X + (result.Width / 2) + (UseOffset ? BobberHorizontalOffset : 0);
-
-            #region Bounding Box Bottom
-            pos.Y = result.Bottom + step;
-            DeviceManager.MoveMouse(pos);
+            cursor.Y += step;
+            DeviceManager.MoveMouse(cursor);
             Thread.Sleep(ScanningDelay);
+            #endregion
+            bobber.Y = cursor.Y;
 
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            #region Bottom Bound
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhookClassic))
             {
-                pos.Y += step;
-                DeviceManager.MoveMouse(pos);
+                cursor.Y += step;
+                DeviceManager.MoveMouse(cursor);
                 Thread.Sleep(ScanningDelay);
             }
-            result.Height = pos.Y - result.Y;
+            cursor.Y -= step;
+            DeviceManager.MoveMouse(cursor);
+            Thread.Sleep(ScanningDelay);
             #endregion
+            bobber.Height = cursor.Y - bobber.Y;
 
-            return result;
+            return bobber;
         }
 
         /// <summary>
@@ -255,12 +264,37 @@ namespace Fishman
 
             var task = Task.Run(() =>
             {
+                logger.Debug("Fixating color");
+                Color color = FixateColor();
+                logger.Debug("[{0}, {1}, {2}]", color.R, color.G, color.B);
+
+                int changedCount = 0;
+                DateTime dateTime = DateTime.MinValue;
+                logger.Debug("Bite loop");
                 while (true)
                 {
-                    if (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+                    Point mousePosition = DeviceManager.GetMousePosition();
+                    Color mouseColor = DeviceManager.GetPixelColor(handle, mousePosition.X, mousePosition.Y);
+
+                    if (IsColorChanged(color, mouseColor))
+                    {
+                        logger.Debug("Changed: [{0}, {1}, {2}]", mouseColor.R, mouseColor.G, mouseColor.B);
+
+                        if (dateTime == DateTime.MinValue)
+                            dateTime = DateTime.UtcNow;
+                        else if (DateTime.UtcNow.Subtract(dateTime).TotalMilliseconds > 150) // if we catched new series of true results - reset old data
+                        {
+                            dateTime = DateTime.UtcNow;
+                            changedCount = 0;
+                        }
+
+                        changedCount++;
+                    }
+
+                    if (changedCount == 3)
                         return true;
 
-                    Thread.Sleep(30);
+                    Thread.Sleep(25);
                 }
             });
 
@@ -271,6 +305,58 @@ namespace Fishman
             }
 
             return task.Result;
+        }
+
+        int fixateMaxTicks = 120;
+        int fixateInterval = 25;
+        /// <summary>
+        /// Calculating "average" background color under cursor over some time (check <see cref="fixateMaxTicks"/> and <see cref="fixateInterval"/>).
+        /// </summary>
+        /// <returns><see cref="Color"/> as average background color</returns>
+        Color FixateColor()
+        {
+            Color color = Color.Empty;
+            float r = 0;
+            float g = 0;
+            float b = 0;
+
+            int ticks = 0;
+            while (true)
+            {
+                Point position = DeviceManager.GetMousePosition();
+                color = DeviceManager.GetPixelColor(handle, position.X, position.Y);
+                r += color.R;
+                g += color.G;
+                b += color.B;
+
+                ticks++;
+                if (ticks >= fixateMaxTicks)
+                    break;
+                Thread.Sleep(fixateInterval);
+            }
+
+            color = Color.FromArgb(0, (byte)(r / ticks), (byte)(g / ticks), (byte)(b / ticks));
+            return color;
+        }
+
+        float colorError = 0.15f;
+        /// <summary>
+        /// Calculating difference between two colors in range of % error.
+        /// </summary>
+        /// <returns>true if difference out of <see cref="colorError"/> bound</returns>
+        bool IsColorChanged(Color main, Color secondary)
+        {
+            float diffR = (float)(main.R - secondary.R) / main.R;
+            float diffG = (float)(main.G - secondary.G) / main.G;
+            float diffB = (float)(main.B - secondary.B) / main.B;
+            float diffAvg = (diffR + diffG + diffB) / 3;
+
+            //logger.Debug("Diff: {0}", diffAvg);
+
+            if (Math.Abs(diffAvg) >= colorError)
+                return true;
+
+            return false;
         }
         #endregion
     }

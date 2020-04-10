@@ -23,5 +23,8 @@ namespace Fishman
 
         [Option('d', "dump", HelpText = "Runs in dump mode. Use it alone.")]
         public bool IsDump { get; set; }
+
+        [Option('c', "classic", HelpText = "Use WoW Classic version of bot.")]
+        public bool IsClassic { get; set; }
     }
 }

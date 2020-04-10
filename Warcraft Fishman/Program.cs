@@ -16,6 +16,7 @@ namespace Fishman
 
         static void Main(string[] args)
         {
+            Console.CancelKeyPress += delegate { logger.Warn(Statistics.GetReport()); };
             LogManager.SetupLogger();
             logger.Info("{0} ver. {1}", BotName, Assembly.GetEntryAssembly().GetName().Version.ToString());
             logger.Info("Author Riketta. Feedback: rowneg@bk.ru / https://github.com/riketta");
@@ -48,13 +49,22 @@ namespace Fishman
             }
 
             logger.Info("Using bobber offset: {0}", arguments.Offset);
-            
+
             logger.Info("Ready to start fishing with selected preset: {0}", preset);
             logger.Info("Press \"Enter\" to start");
             Console.ReadLine();
-            Bot fishman = new Bot(preset);
-            fishman.UseOffset = arguments.Offset;
-            fishman.FishingLoop();
+            if (arguments.IsClassic)
+            {
+                ClassicBot fishman = new ClassicBot(preset);
+                fishman.UseOffset = arguments.Offset;
+                fishman.FishingLoop();
+            }
+            else
+            {
+                Bot fishman = new Bot(preset);
+                fishman.UseOffset = arguments.Offset;
+                fishman.FishingLoop();
+            }
 
             while (true);
         }
