@@ -63,6 +63,7 @@ namespace Fishman
             {
                 Bot fishman = new Bot(preset);
                 fishman.UseOffset = arguments.Offset;
+                fishman.InvertClicks = arguments.IsInvert;
                 fishman.FishingLoop();
             }
 

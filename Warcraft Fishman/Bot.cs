@@ -22,6 +22,7 @@ namespace Fishman
         const int ScanningDelay = 20; // 1000 / ScanningDelay = Minimum required FPS
 
         public bool UseOffset = false;
+        public bool InvertClicks = false;
         const int BobberHorizontalOffset = 12; // used to reduce fails caused by default bobber feathers
 
         /// <summary>
@@ -129,10 +130,10 @@ namespace Fishman
                 return false;
 
             logger.Info("Waiting bobber to stop");
-            Thread.Sleep(200);
+            //Thread.Sleep(200);
             DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
             logger.Info("Mouse click");
-            DeviceManager.MouseClick(handle);
+            DeviceManager.MouseClick(handle, InvertClicks);
             logger.Info("Loot delay");
             Thread.Sleep(1000);
 
