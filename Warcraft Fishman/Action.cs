@@ -35,24 +35,30 @@ namespace Fishman
 
         /// <summary>Description or name of action. Unnecessary field</summary>
         public string Description = "";
+
         /// <summary>Use this field for manual mapping action button. Unnecessary field. Default: one of N2-N9 numeric buttons</summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public Win32.VirtualKeys Key = Win32.VirtualKeys.None;
+
         /// <summary>Trigger type that defines how action can be called. Necessary field. Default: <see cref="Event.None"/></summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public Event Trigger = Event.None;
+
         /// <summary>Delay before invoking event in milliseconds</summary>
         public int Delay = 0;
+
         /// <summary>Global spell cooldown in milliseconds</summary>
         public int GCD = 1500;
+
         /// <summary>Cast time in milliseconds. 0 if instant. Don't use it for GCD. Unnecessary field. Default: 0</summary>
         public int CastTime = 0;
+
         /// <summary>Event call interval in seconds. Used only with <see cref="Event.Interval"/>. Necessary field</summary>
         public int Interval = 0;
+
         /// <summary>Date of last event invoke. Used in <see cref="Event.Interval"/> event type</summary>
         [JsonIgnore]
         DateTime LastInvoke = DateTime.MinValue;
-
 
         /// <summary>
         /// Do described action
