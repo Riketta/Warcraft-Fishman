@@ -45,15 +45,15 @@ namespace Fishman
         {
             Bitmap cursorIcon = null;
 
-            WinApi.CURSORINFO pci;
-            pci.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(WinApi.CURSORINFO));
+            Win32.CURSORINFO pci;
+            pci.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Win32.CURSORINFO));
 
-            if (WinApi.GetCursorInfo(out pci))
+            if (Win32.GetCursorInfo(out pci))
             {
                 using (var icon = new Bitmap(32, 32))
                 {
                     using (Graphics g = Graphics.FromImage(icon))
-                        WinApi.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
+                        Win32.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
                     cursorIcon = new Bitmap(icon).Clone() as Bitmap; // We have to "clone" icon because handle won't be released if we continue use it
                 }
             }
@@ -98,11 +98,11 @@ namespace Fishman
         /// </summary>
         /// <param name="hWnd">Window handle to send key to</param>
         /// <param name="key">Key code</param>
-        public static void PressKey(IntPtr hWnd, WinApi.VirtualKeys key)
+        public static void PressKey(IntPtr hWnd, Win32.VirtualKeys key)
         {
-            WinApi.PostMessage(hWnd, WinApi.WM_KEYDOWN, (UInt32)key, IntPtr.Zero);
+            Win32.PostMessage(hWnd, Win32.WM_KEYDOWN, (UInt32)key, IntPtr.Zero);
             Thread.Sleep(50 + random.Next(-10, 35));
-            WinApi.PostMessage(hWnd, WinApi.WM_KEYUP, (UInt32)key, IntPtr.Zero);
+            Win32.PostMessage(hWnd, Win32.WM_KEYUP, (UInt32)key, IntPtr.Zero);
         }
 
         /// <summary>
@@ -112,9 +112,9 @@ namespace Fishman
         /// <param name="invert">Flag to use RMB instead of LMB</param>
         public static void MouseClick(IntPtr hWnd, bool invert = false)
         {
-            WinApi.mouse_event((invert ? WinApi.MOUSEEVENTF_RIGHTDOWN : WinApi.MOUSEEVENTF_LEFTDOWN), 0, 0, 0, UIntPtr.Zero);
+            Win32.mouse_event((invert ? Win32.MOUSEEVENTF_RIGHTDOWN : Win32.MOUSEEVENTF_LEFTDOWN), 0, 0, 0, UIntPtr.Zero);
             Thread.Sleep(70 + random.Next(-12, 12));
-            WinApi.mouse_event((invert ? WinApi.MOUSEEVENTF_RIGHTUP : WinApi.MOUSEEVENTF_LEFTUP), 0, 0, 0, UIntPtr.Zero);
+            Win32.mouse_event((invert ? Win32.MOUSEEVENTF_RIGHTUP : Win32.MOUSEEVENTF_LEFTUP), 0, 0, 0, UIntPtr.Zero);
         }
 
         public static Point GetMousePosition()
@@ -129,9 +129,9 @@ namespace Fishman
 
         static public Color GetPixelColor(IntPtr hwnd, int x, int y)
         {
-            IntPtr hdc = WinApi.GetWindowDC(hwnd);
-            uint pixel = WinApi.GetPixel(hdc, x, y);
-            WinApi.ReleaseDC(hwnd, hdc);
+            IntPtr hdc = Win32.GetWindowDC(hwnd);
+            uint pixel = Win32.GetPixel(hdc, x, y);
+            Win32.ReleaseDC(hwnd, hdc);
             Color color = Color.FromArgb((int)(pixel & 0x000000FF),
                             (int)(pixel & 0x0000FF00) >> 8,
                             (int)(pixel & 0x00FF0000) >> 16);

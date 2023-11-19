@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fishman
 {
-    class WinApi
+    class Win32
     {
         [DllImport("user32.dll")]
         public static extern IntPtr GetDC(IntPtr hwnd);

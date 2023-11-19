@@ -107,8 +107,8 @@ namespace Fishman
 
         public void SetGameWindowActive()
         {
-            bool SyncShow = WinApi.SetForegroundWindow(handle);
-            bool ASyncShow = WinApi.ShowWindowAsync(handle, 9); // SW_RESTORE = 9
+            bool SyncShow = Win32.SetForegroundWindow(handle);
+            bool ASyncShow = Win32.ShowWindowAsync(handle, 9); // SW_RESTORE = 9
             Thread.Sleep(300);
         }
 

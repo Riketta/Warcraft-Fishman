@@ -15,7 +15,7 @@ namespace Fishman
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static Action Fish = new Action() { Key = WinApi.VirtualKeys.N1, CastTime = 22 * 1000, Description = "Fishing", Trigger = Event.Fish, GCD = 250 };
+        public static Action Fish = new Action() { Key = Win32.VirtualKeys.N1, CastTime = 22 * 1000, Description = "Fishing", Trigger = Event.Fish, GCD = 250 };
 
         public enum Event
         {
@@ -37,7 +37,7 @@ namespace Fishman
         public string Description = "";
         /// <summary>Use this field for manual mapping action button. Unnecessary field. Default: one of N2-N9 numeric buttons</summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public WinApi.VirtualKeys Key = WinApi.VirtualKeys.None;
+        public Win32.VirtualKeys Key = Win32.VirtualKeys.None;
         /// <summary>Trigger type that defines how action can be called. Necessary field. Default: <see cref="Event.None"/></summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public Event Trigger = Event.None;
