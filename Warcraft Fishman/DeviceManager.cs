@@ -68,8 +68,12 @@ namespace Fishman
 
             for (int x = 0; x < 5; x++)
                 for (int y = 0; y < 5; y++)
+                {
+                    //a.Save("a.ico", System.Drawing.Imaging.ImageFormat.Icon);
+                    //b.Save("b.ico", System.Drawing.Imaging.ImageFormat.Icon);
                     if (a.GetPixel(x, y) != b.GetPixel(x, y))
                         return false;
+                }
             return true;
         }
 

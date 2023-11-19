@@ -41,6 +41,8 @@ namespace Fishman
         /// <summary>Trigger type that defines how action can be called. Necessary field. Default: <see cref="Event.None"/></summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public Event Trigger = Event.None;
+        /// <summary>Delay before invoking event in milliseconds</summary>
+        public int Delay = 0;
         /// <summary>Global spell cooldown in milliseconds</summary>
         public int GCD = 1500;
         /// <summary>Cast time in milliseconds. 0 if instant. Don't use it for GCD. Unnecessary field. Default: 0</summary>
@@ -65,18 +67,19 @@ namespace Fishman
                 case Event.Once:
                 case Event.PreFish:
                 case Event.PostFish:
+                    DoAction(hWnd);
+                    break;
+
                 case Event.Fish:
                     PressKey(hWnd);
-                    Sleep();
+                    //Sleep();
                     break;
 
                 case Event.Interval:
                     // if action already should be called or if it should be called while next fishing action - call it now
-                    if (DateTime.Now.AddMilliseconds(Fish.CastTime) > LastInvoke.AddSeconds(Interval)) // won't work if Intercal == Cooldown
+                    if (DateTime.Now.AddMilliseconds(Fish.CastTime) > LastInvoke.AddSeconds(Interval)) // won't work if Interval == Cooldown
                     {
-                        logger.Info("Calling event");
-                        PressKey(hWnd);
-                        Sleep();
+                        DoAction(hWnd);
                         LastInvoke = DateTime.Now;
                     }
                     break;
@@ -87,6 +90,9 @@ namespace Fishman
             }
         }
 
+        /// <summary>
+        /// Waiting for cast time or GCD
+        /// </summary>
         private void Sleep()
         {
             if (Trigger != Event.Fish)
@@ -97,15 +103,32 @@ namespace Fishman
             }
         }
 
+        private void SleepDelay()
+        {
+            if (Trigger != Event.Fish && Delay > 0)
+            {
+                logger.Info("Waiting for {0} milliseconds delay", Delay);
+                Thread.Sleep(Delay);
+            }
+        }
+
         private void PressKey(IntPtr hWnd)
         {
             logger.Debug("Pressing key \"{0}\"", Key);
             DeviceManager.PressKey(hWnd, Key);
         }
 
+        private void DoAction(IntPtr hWnd)
+        {
+            logger.Info("Calling \"{0}\" {1} event", string.IsNullOrEmpty(Description) ? "-" : Description, Trigger);
+            SleepDelay();
+            PressKey(hWnd);
+            Sleep();
+        }
+
         public override string ToString()
         {
-            return string.Format("Description: \"{0}\"; GCD: {1}; Trigger: {2}; Key: \"{3}\"; Cast time: {4}; Interval: {5}", Description, GCD / 1000f, Trigger, Key, CastTime / 1000f, Interval);
+            return string.Format("Description: \"{0}\"; GCD: {1}; Trigger: {2}; Key: \"{3}\"; Delay: {4}; Cast time: {5}; Interval: {6}", Description, GCD / 1000f, Trigger, Key, Delay, CastTime / 1000f, Interval);
         }
     }
 }

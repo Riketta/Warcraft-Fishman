@@ -39,6 +39,11 @@ namespace Fishman
             logger.Info("Loading cursors");
             DeviceManager.LoadCursors();
 
+            if (arguments.IsClassic)
+                logger.Info("Classic Bot will be used");
+            else
+                logger.Info("Retail Bot will be used");
+
             Preset preset = Preset.Default;
             if (string.IsNullOrEmpty(arguments.Preset))
                 logger.Info("No preset selected. Using default");
@@ -55,8 +60,10 @@ namespace Fishman
             Console.ReadLine();
             if (arguments.IsClassic)
             {
+                System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
                 ClassicBot fishman = new ClassicBot(preset);
                 fishman.UseOffset = arguments.Offset;
+                fishman.InvertClicks = arguments.IsInvert;
                 fishman.FishingLoop();
             }
             else
@@ -69,6 +76,5 @@ namespace Fishman
 
             while (true);
         }
-
     }
 }

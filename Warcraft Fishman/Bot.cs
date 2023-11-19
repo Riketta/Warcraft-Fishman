@@ -17,9 +17,9 @@ namespace Fishman
         IntPtr handle = IntPtr.Zero;
         Preset preset = null;
 
-        const int ScanningRetries = 4;
+        const int ScanningRetries = 3;
         const int ScanningSteps = 10;
-        const int ScanningDelay = 20; // 1000 / ScanningDelay = Minimum required FPS
+        const int ScanningDelay = 16; // 1000 / ScanningDelay = Minimum required FPS
 
         public bool UseOffset = false;
         public bool InvertClicks = false;
@@ -112,6 +112,10 @@ namespace Fishman
             if (processes.Length > 0)
                 wow = processes[0];
 
+            processes = Process.GetProcessesByName("WowClassic");
+            if (processes.Length > 0)
+                wow = processes[0];
+
             return wow;
         }
 
@@ -124,7 +128,7 @@ namespace Fishman
                 return false;
 
             Rectangle bobber = GetBobberSize();
-            DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom + 3));
+            DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom + 4));
 
             if (!WaitForBite(fishing.CastTime))
                 return false;
@@ -132,6 +136,7 @@ namespace Fishman
             logger.Info("Waiting bobber to stop");
             //Thread.Sleep(200);
             DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
+            Thread.Sleep(50);
             logger.Info("Mouse click");
             DeviceManager.MouseClick(handle, InvertClicks);
             logger.Info("Loot delay");
@@ -152,16 +157,16 @@ namespace Fishman
             Screen screen = Screen.PrimaryScreen;
             Point pos = new Point();
 
-            int xMin = screen.Bounds.Width / 3;
-            int xMax = xMin * 2;
-            int yMin = screen.Bounds.Height / 4;
-            int yMax = yMin * 2;
+            int xMin = screen.Bounds.Width / 2 - (screen.Bounds.Width / 8);
+            int xMax = screen.Bounds.Width / 2 + (screen.Bounds.Width / 8);
+            int yMin = screen.Bounds.Height - (int)(screen.Bounds.Height / 2.25) - (int)(screen.Bounds.Height / 4.3);
+            int yMax = screen.Bounds.Height - (int)(screen.Bounds.Height / 2.25);
 
             int xStep = ((xMax - xMin) / ScanningSteps);
             int yStep = ((yMax - yMin) / ScanningSteps);
             int xOffSet = (xStep / ScanningRetries);
 
-            for (int ScanAttempt = 1; ScanAttempt <= ScanningRetries; ScanAttempt++)
+            for (int ScanAttempt = 0; ScanAttempt <= ScanningRetries; ScanAttempt++)
                 for (int mouseX = xMin + xOffSet * ScanAttempt; mouseX < xMax; mouseX += xStep)
                     for (int mouseY = yMin; mouseY < yMax; mouseY += yStep)
                     {
@@ -187,7 +192,7 @@ namespace Fishman
             Point pos = DeviceManager.GetMousePosition();
             Rectangle result = new Rectangle(pos, new Size(0, 0));
 
-            
+
             #region Bounding Box Left Side
             pos.X -= step;
             DeviceManager.MoveMouse(pos);
