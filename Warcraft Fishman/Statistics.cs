@@ -40,7 +40,7 @@ namespace Fishman
         public static string GetReport()
         {
             string triesReport = $"Total tries: {TotalTries}; Success: {SuccessTries}; Failed: {FailedTries};";
-            string timeReport = $"Average execution time: {Math.Round(TotalFishing / SuccessTries, 2)}; Min: {Math.Round(MinFishing, 2)}; Max: {Math.Round(MaxFishing, 2)}";
+            string timeReport = $"Average execution time: {Math.Round(TotalFishing / SuccessTries, 2):F2}; Min: {Math.Round(MinFishing, 2):F2}; Max: {Math.Round(MaxFishing, 2):F2}";
             string report = string.Format("### Statistic Report ###{0}{1}{0}{2}", Environment.NewLine, triesReport, timeReport);
 
             return report;
