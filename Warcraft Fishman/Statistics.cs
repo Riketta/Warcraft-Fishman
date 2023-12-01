@@ -16,32 +16,47 @@ namespace Fishman
 
         static double MinFishing = double.MaxValue;
         static double MaxFishing = double.MinValue;
-        static double TotalFishing = 0.0;
+
+        /// <summary>
+        /// The amount of time spent on successful fishing.
+        /// </summary>
+        static double TotalTimeFishing = 0.0;
+
+        /// <summary>
+        /// Amount of time spent on unsuccessful fishing attempts.
+        /// </summary>
+        static double WastedTimeFishing = 0.0;
 
         public static void AddTry(double timeSpent, bool isSuccess)
         {
-            logger.Debug("Time spent for last try: {0}", timeSpent);
+            logger.Debug($"Time spent on last attempt: {timeSpent:F2} seconds");
 
             TotalTries++;
             if (isSuccess && timeSpent > 3.0) // timeSpent includes all sleeps bot do during fishing try
             {
                 SuccessTries++;
 
-                TotalFishing += timeSpent;
+                TotalTimeFishing += timeSpent;
                 if (timeSpent < MinFishing)
                     MinFishing = timeSpent;
                 else if (timeSpent > MaxFishing)
                     MaxFishing = timeSpent;
             }
             else
+            {
                 FailedTries++;
+                WastedTimeFishing += timeSpent;
+            }
         }
 
         public static string GetReport()
         {
+            double timePerSuccessfulAttempt = Math.Round(TotalTimeFishing / SuccessTries, 2);
+
             string triesReport = $"Total tries: {TotalTries}; Success: {SuccessTries}; Failed: {FailedTries};";
-            string timeReport = $"Average execution time: {Math.Round(TotalFishing / SuccessTries, 2):F2}; Min: {Math.Round(MinFishing, 2):F2}; Max: {Math.Round(MaxFishing, 2):F2}";
-            string report = string.Format("### Statistic Report ###{0}{1}{0}{2}", Environment.NewLine, triesReport, timeReport);
+            string timeReportA = $"Average execution time: {timePerSuccessfulAttempt:F2}; Min: {Math.Round(MinFishing, 2):F2}; Max: {Math.Round(MaxFishing, 2):F2};";
+            string timeReportB = $"Total time fishing: {TotalTimeFishing:F2} seconds; Wasted time: {WastedTimeFishing:F2} seconds;";
+            string report = string.Format($"### Statistic Report ###{Environment.NewLine}{triesReport}{Environment.NewLine}{timeReportA}{Environment.NewLine}{timeReportB}");
 
             return report;
         }
