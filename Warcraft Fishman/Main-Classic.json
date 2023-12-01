@@ -15,7 +15,7 @@
             "Trigger": "Interval",
             "Delay": 100,
             "CastTime": 5050,
-            "Interval": 600
+            "Interval": 660
         },
         {
             "Description": "Logout (3600 = 1 Hour)",

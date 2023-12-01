@@ -7,66 +7,74 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VersaScreenCapture;
 
 namespace Fishman
 {
-    class Bot
+    class RetailBot : IBot
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        IntPtr handle = IntPtr.Zero;
-        Preset preset = null;
-
-        const int ScanningRetries = 3;
-        const int ScanningSteps = 10;
-        const int ScanningDelay = 16; // 1000 / ScanningDelay = Minimum required FPS
-
-        public bool UseOffset = false;
-        public bool InvertClicks = false;
-        const int BobberHorizontalOffset = 12; // used to reduce fails caused by default bobber feathers
+        protected override IntPtr Handle { get; set; } = IntPtr.Zero;
+        protected override Preset Preset { get; set; } = null;
+        protected override Bitmap FishhookCursor { get; set; }
+        
+        readonly RetailBotOptions _options = null;
 
         /// <summary>
-        /// Fishman bot main class
+        /// Retail, Wrath and Cata version of the bot.
         /// </summary>
-        /// <param name="preset">Actions preset that should be used for fishing</param>
-        public Bot(Preset preset)
+        /// <param name="preset">Actions preset that should be used for fishing.</param>
+        /// <param name="options">Set of options for this bot version.</param>
+        public RetailBot(Preset preset, RetailBotOptions options)
         {
-            handle = GetWoWProcess().MainWindowHandle;
-            this.preset = preset;
+            Handle = GetWoWProcess().MainWindowHandle;
+            Preset = preset;
+            _options = options;
+
+            logger.Info("Trying to load cursor a image from a file");
+            FishhookCursor = DeviceManager.LoadCursor(_options.PathToFishhookCursor);
+            if (FishhookCursor is null)
+                throw new Exception($"Cursor icon \"{_options.PathToFishhookCursor}\" not found!");
         }
 
-        /// <summary>
-        /// Main fishing loop.
-        /// Supposed that one iteration can't lasts longer than ~30 seconds: full fishing time + some other events with cast time.
-        /// </summary>
-        public void FishingLoop()
+        public override void Start()
         {
             logger.Info("### Fishing loop started ###");
             logger.Info("Looking for WoW window handle");
-            logger.Debug("Handle: {0}", handle);
+            logger.Debug("Handle: {0}", Handle);
             SetGameWindowActive();
 
-            if (!preset.Validate())
+            if (!Preset.Validate())
             {
                 logger.Error("Invalid preset!");
                 throw new Exception("Invalid preset");
             }
 
+            FishingLoop();
+        }
+
+        public override void Stop()
+        {
+        }
+
+        protected override void FishingLoop()
+        {
             logger.Info("Invoking once-only prefishing actions");
-            foreach (var action in preset.GetActions(Action.Event.Once))
-                action.Invoke(handle);
+            foreach (var action in Preset.GetActions(Action.Event.Once))
+                action.Invoke(Handle);
 
             while (true)
             {
                 logger.Info("### Fishing iteration started ###");
 
                 logger.Info("Invoking pre-fishing actions");
-                foreach (var action in preset.GetActions(Action.Event.PreFish))
-                    action.Invoke(handle);
+                foreach (var action in Preset.GetActions(Action.Event.PreFish))
+                    action.Invoke(Handle);
 
                 logger.Info("Checking events");
-                foreach (var action in preset.GetActions(Action.Event.Interval))
-                    action.Invoke(handle);
+                foreach (var action in Preset.GetActions(Action.Event.Interval))
+                    action.Invoke(Handle);
 
                 logger.Info("Starting fishing");
                 try
@@ -75,7 +83,7 @@ namespace Fishman
                     while (!success)
                     {
                         DateTime fishingStarted = DateTime.Now;
-                        success = Fishing(preset.GetActions(Action.Event.Fish)[0]);
+                        success = Fishing(Preset.GetActions(Action.Event.Fish)[0]);
                         Statistics.AddTry(DateTime.Now.Subtract(fishingStarted).TotalSeconds, success);
 
                         if (!success)
@@ -88,19 +96,19 @@ namespace Fishman
                 }
 
                 logger.Info("Invoking post-fishing actions");
-                foreach (var action in preset.GetActions(Action.Event.PostFish))
-                    action.Invoke(handle);
+                foreach (var action in Preset.GetActions(Action.Event.PostFish))
+                    action.Invoke(Handle);
             }
         }
 
-        public void SetGameWindowActive()
+        void SetGameWindowActive()
         {
-            bool SyncShow = Win32.SetForegroundWindow(handle);
-            bool ASyncShow = Win32.ShowWindowAsync(handle, 9); // SW_RESTORE = 9
+            bool SyncShow = Win32.SetForegroundWindow(Handle);
+            bool ASyncShow = Win32.ShowWindowAsync(Handle, 9); // SW_RESTORE = 9
             Thread.Sleep(300);
         }
 
-        private static Process GetWoWProcess()
+        static Process GetWoWProcess()
         {
             Process wow = null;
 
@@ -120,9 +128,9 @@ namespace Fishman
         }
 
         #region Fishing actions
-        public bool Fishing(Action fishing)
+        protected override bool Fishing(Action fishing)
         {
-            fishing.Invoke(handle);
+            fishing.Invoke(Handle);
 
             if (!FindBobber())
                 return false;
@@ -138,35 +146,30 @@ namespace Fishman
             DeviceManager.MoveMouse(new Point(bobber.X + (bobber.Width / 2), bobber.Bottom - 15));
             Thread.Sleep(50);
             logger.Info("Mouse click");
-            DeviceManager.MouseClick(handle, InvertClicks);
+            DeviceManager.MouseClick(Handle, _options.SwapMouseButtonClicks);
             logger.Info("Loot delay");
             Thread.Sleep(1000);
 
             return true;
         }
 
-        /// <summary>
-        /// Bobber searching loop. Prepares cursor for bite waiting loop
-        /// Use only with <see cref="Action.Event.Fish"/>
-        /// </summary>
-        /// <returns>true if bobber found, false if else</returns>
-        bool FindBobber()
+        protected override bool FindBobber()
         {
             logger.Debug("Looking for a bobber");
 
             Screen screen = Screen.PrimaryScreen;
             Point pos = new Point();
 
-            int xMin = screen.Bounds.Width / 2 - (screen.Bounds.Width / 8);
-            int xMax = screen.Bounds.Width / 2 + (screen.Bounds.Width / 8);
-            int yMin = screen.Bounds.Height - (int)(screen.Bounds.Height / 2.25) - (int)(screen.Bounds.Height / 4.3);
-            int yMax = screen.Bounds.Height - (int)(screen.Bounds.Height / 2.25);
+            int xMin = _options.ScanRegionXMin;
+            int xMax = _options.ScanRegionXMax;
+            int yMin = _options.ScanRegionYMin;
+            int yMax = _options.ScanRegionYMax;
 
-            int xStep = ((xMax - xMin) / ScanningSteps);
-            int yStep = ((yMax - yMin) / ScanningSteps);
-            int xOffSet = (xStep / ScanningRetries);
+            int xStep = ((xMax - xMin) / _options.ScanningSteps);
+            int yStep = ((yMax - yMin) / _options.ScanningSteps);
+            int xOffSet = (xStep / _options.ScanningRetries);
 
-            for (int ScanAttempt = 0; ScanAttempt <= ScanningRetries; ScanAttempt++)
+            for (int ScanAttempt = 0; ScanAttempt <= _options.ScanningRetries; ScanAttempt++)
                 for (int mouseX = xMin + xOffSet * ScanAttempt; mouseX < xMax; mouseX += xStep)
                     for (int mouseY = yMin; mouseY < yMax; mouseY += yStep)
                     {
@@ -174,10 +177,10 @@ namespace Fishman
                         pos.Y = screen.WorkingArea.Y + mouseY;
                         DeviceManager.MoveMouse(pos);
 
-                        Thread.Sleep(ScanningDelay);
+                        Thread.Sleep(_options.ScanningDelay);
 
                         Bitmap icon = DeviceManager.GetCurrentIcon();
-                        if (DeviceManager.CompareIcons(icon, DeviceManager.IconFishhook))
+                        if (DeviceManager.CompareIcons(icon, FishhookCursor))
                             return true;
                     }
 
@@ -185,7 +188,7 @@ namespace Fishman
             return false;
         }
 
-        Rectangle GetBobberSize()
+        protected override Rectangle GetBobberSize()
         {
             const int step = 4;
 
@@ -196,13 +199,13 @@ namespace Fishman
             #region Bounding Box Left Side
             pos.X -= step;
             DeviceManager.MoveMouse(pos);
-            Thread.Sleep(ScanningDelay);
+            Thread.Sleep(_options.ScanningDelay);
 
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
             {
                 pos.X -= step;
                 DeviceManager.MoveMouse(pos);
-                Thread.Sleep(ScanningDelay);
+                Thread.Sleep(_options.ScanningDelay);
             }
 
             // -- undo last step since is not on bobber anymore
@@ -216,31 +219,31 @@ namespace Fishman
             #region Bounding Box Right Side
             pos.X = result.Right + step;
             DeviceManager.MoveMouse(pos);
-            Thread.Sleep(ScanningDelay);
+            Thread.Sleep(_options.ScanningDelay);
 
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
             {
                 pos.X += step;
                 DeviceManager.MoveMouse(pos);
-                Thread.Sleep(ScanningDelay);
+                Thread.Sleep(_options.ScanningDelay);
             }
             result.Width = pos.X - result.X;
             #endregion
 
 
             // ### move to horizontal center of bounding box ###
-            pos.X = result.X + (result.Width / 2) + (UseOffset ? BobberHorizontalOffset : 0);
+            pos.X = result.X + (result.Width / 2) + (_options.UseHorCursorOffset ? _options.BobberHorizontalOffset : 0);
 
             #region Bounding Box Bottom
             pos.Y = result.Bottom + step;
             DeviceManager.MoveMouse(pos);
-            Thread.Sleep(ScanningDelay);
+            Thread.Sleep(_options.ScanningDelay);
 
-            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+            while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
             {
                 pos.Y += step;
                 DeviceManager.MoveMouse(pos);
-                Thread.Sleep(ScanningDelay);
+                Thread.Sleep(_options.ScanningDelay);
             }
             result.Height = pos.Y - result.Y;
             #endregion
@@ -248,14 +251,7 @@ namespace Fishman
             return result;
         }
 
-        /// <summary>
-        /// Loop that should be called after <see cref="FindBobber"/> with true result.
-        /// Waits for bite. Waits until bite or until timeout.
-        /// Use only with <see cref="Action.Event.Fish"/>.
-        /// </summary>
-        /// <param name="timeout">Timeout in milliseconds</param>
-        /// <returns>true if bite detected</returns>
-        bool WaitForBite(int timeout)
+        protected override bool WaitForBite(int timeout)
         {
             logger.Debug("Waiting for bite");
 
@@ -263,7 +259,7 @@ namespace Fishman
             {
                 while (true)
                 {
-                    if (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), DeviceManager.IconFishhook))
+                    if (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
                         return true;
 
                     Thread.Sleep(30);

@@ -15,30 +15,13 @@ namespace Fishman
 
         private static Random random = new Random();
 
-        public static readonly string IconFileDefault = "default.bmp";
-        public static readonly string IconFileFishhook = "fishhook.bmp";
-        public static readonly string IconFileFishhookClassic = "fishhook_classic.bmp";
-
-        public static Bitmap IconDefault;
-        public static Bitmap IconFishhook;
-        public static Bitmap IconFishhookClassic;
-
-        public static void LoadCursors()
+        public static Bitmap LoadCursor(string pathToCursorImage)
         {
-            if (File.Exists(IconFileDefault))
-                IconDefault = Image.FromFile(IconFileDefault) as Bitmap;
-            else
-                logger.Warn("Icon \"{0}\" not found", IconFileDefault);
-
-            if (File.Exists(IconFileFishhook))
-                IconFishhook = Image.FromFile(IconFileFishhook) as Bitmap;
-            else
-                logger.Warn("Icon \"{0}\" not found", IconFileFishhook);
-
-            if (File.Exists(IconFileFishhookClassic))
-                IconFishhookClassic = Image.FromFile(IconFileFishhookClassic) as Bitmap;
-            else
-                logger.Warn("Icon \"{0}\" not found", IconFileFishhookClassic);
+            Bitmap cursor = null;
+            if (File.Exists(pathToCursorImage))
+                cursor = Image.FromFile(pathToCursorImage) as Bitmap;
+            
+            return cursor;
         }
 
         public static Bitmap GetCurrentIcon()
@@ -79,9 +62,7 @@ namespace Fishman
 
         public static void DumpIconsLoop()
         {
-            logger.Info("Infinity loop that saves current icon once per second");
-            logger.Info("Save default WoW icon as " + IconFileDefault);
-            logger.Info("Save fish-hook icon as " + IconFileFishhook);
+            logger.Info("Infinit loop that saves current icon once per second");
 
             int counter = 0;
             while (true)
