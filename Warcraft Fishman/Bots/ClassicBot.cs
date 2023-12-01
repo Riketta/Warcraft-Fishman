@@ -307,8 +307,8 @@ namespace Fishman
                     if (value == 0)
                         continue;
 
-                    if (value < _options.MaxThreshold * 1.5)
-                        logger.Debug($"Weight: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
+                    if (value > _options.MinThreshold * 0.7 && value < _options.MaxThreshold * 1.5)
+                        logger.Debug($"Weight: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]; Prev frame was detected: {_lastFrameDetectionState}");
 
                     if (value > _options.MinThreshold && value < _options.MaxThreshold)
                     {
