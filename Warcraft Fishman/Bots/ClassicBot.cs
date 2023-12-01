@@ -14,13 +14,14 @@ namespace Fishman
 {
     class ClassicBot : IBot
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected override IntPtr Handle { get; set; } = IntPtr.Zero;
         protected override Preset Preset { get; set; } = null;
         protected override Bitmap FishhookCursor { get; set; }
-        
+
         readonly ClassicBotOptions _options = null;
+        readonly FrameProcessor _frameProcessor = null;
 
         bool _lastDetectionState = false;
 
@@ -50,6 +51,8 @@ namespace Fishman
             FishhookCursor = DeviceManager.LoadCursor(_options.PathToFishhookCursor);
             if (FishhookCursor is null)
                 throw new Exception($"Cursor icon \"{_options.PathToFishhookCursor}\" not found!");
+
+            _frameProcessor = new FrameProcessor(_options.PathToTemplate);
         }
 
         ~ClassicBot()
@@ -300,7 +303,7 @@ namespace Fishman
                 double value = 0;
                 while (true)
                 {
-                    value = TemplateMatching.BiteDetection(detectionRegion);
+                    value = _frameProcessor.BiteDetection(detectionRegion);
                     if (value == 0)
                         continue;
 

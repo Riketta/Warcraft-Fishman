@@ -25,7 +25,10 @@ namespace Fishman
         public int ScanRegionYMax { get; set; } = 600;
 
         #region Classic Specific Options
-        public string PathToTemplate { get; set; } = "bobber_classic.png";
+        /// <summary>
+        /// Path to template image file.
+        /// </summary>
+        public string PathToTemplate { get; set; } = "template_bobber_classic.png";
 
         /// <summary>
         /// [0.12; 0.15] for full bobber tracking | [0.05; 0.10] for red feather tracking

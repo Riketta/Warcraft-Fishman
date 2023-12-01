@@ -22,6 +22,8 @@ namespace Fishman
         /// </summary>
         public bool Debug { get; set; } = false;
 
+        public bool DebugOpenCV { get; set; } = false;
+
         public RetailBotOptions RetailBotOptions { get; set; } = new RetailBotOptions();
         public ClassicBotOptions ClassicBotOptions { get; set; } = new ClassicBotOptions();
 
