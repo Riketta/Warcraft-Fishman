@@ -308,7 +308,7 @@ namespace Fishman
                         continue;
 
                     if (value < _options.MaxThreshold * 1.5)
-                        logger.Debug("Weight: {0}", value);
+                        logger.Debug($"Weight: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
 
                     if (value > _options.MinThreshold && value < _options.MaxThreshold)
                     {
@@ -316,6 +316,7 @@ namespace Fishman
                         {
                             state = true;
                             _lastDetectionState = false;
+                            logger.Debug($"Match: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
                             break;
                         }
                         else
