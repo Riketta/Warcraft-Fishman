@@ -103,6 +103,7 @@
     <Compile Include="Bot.cs" />
     <Compile Include="ClassicBot.cs" />
     <Compile Include="DeviceManager.cs" />
+    <Compile Include="InputActions\IInputAction.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Preset.cs" />
     <Compile Include="Program.cs" />
@@ -112,6 +113,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Main-AntiAFK.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Main-Classic.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Main-Retail.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Main-Wrath.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
