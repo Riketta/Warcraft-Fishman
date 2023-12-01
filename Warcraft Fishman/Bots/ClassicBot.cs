@@ -23,7 +23,7 @@ namespace Fishman
         readonly ClassicBotOptions _options = null;
         readonly FrameProcessor _frameProcessor = null;
 
-        bool _lastDetectionState = false;
+        bool _lastFrameDetectionState = false;
 
         /// <summary>
         /// Classic and TBC version of the bot.
@@ -312,21 +312,22 @@ namespace Fishman
 
                     if (value > _options.MinThreshold && value < _options.MaxThreshold)
                     {
-                        if (_lastDetectionState) // two frame validation
+                        if (_lastFrameDetectionState) // two frame validation
                         {
                             state = true;
-                            _lastDetectionState = false;
+                            _lastFrameDetectionState = false;
                             logger.Debug($"Match: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
+
                             break;
                         }
                         else
                         {
-                            _lastDetectionState = true;
+                            _lastFrameDetectionState = true;
                             continue;
                         }
                     }
                     else
-                        _lastDetectionState = false;
+                        _lastFrameDetectionState = false;
 
                     //Thread.Sleep(1);
                 }
