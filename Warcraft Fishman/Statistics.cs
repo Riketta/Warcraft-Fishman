@@ -56,7 +56,7 @@ namespace Fishman
             string triesReport = $"Total tries: {TotalTries}; Success: {SuccessTries}; Failed: {FailedTries};";
             string timeReportA = $"Average execution time: {timePerSuccessfulAttempt:F2}; Min: {Math.Round(MinFishing, 2):F2}; Max: {Math.Round(MaxFishing, 2):F2};";
             string timeReportB = $"Total time fishing: {TotalTimeFishing:F2} seconds; Wasted time: {WastedTimeFishing:F2} seconds;";
-            string report = string.Format($"### Statistic Report ###{Environment.NewLine}{triesReport}{Environment.NewLine}{timeReportA}{Environment.NewLine}{timeReportB}");
+            string report = string.Format($"### Statistic Report ###{Environment.NewLine}  {triesReport}{Environment.NewLine}  {timeReportA}{Environment.NewLine}  {timeReportB}");
 
             return report;
         }
