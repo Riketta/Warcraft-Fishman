@@ -52,7 +52,10 @@ namespace Fishman
             if (FishhookCursor is null)
                 throw new Exception($"Cursor icon \"{_options.PathToFishhookCursor}\" not found!");
 
-            _frameProcessor = new FrameProcessor(_options.PathToTemplate);
+            _frameProcessor = new FrameProcessor(_options.PathToTemplate)
+            {
+                Debug = _options.DebugOpenCV
+            };
         }
 
         ~ClassicBot()
