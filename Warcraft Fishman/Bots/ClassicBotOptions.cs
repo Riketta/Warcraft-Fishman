@@ -25,6 +25,8 @@ namespace Fishman
         public int ScanRegionYMax { get; set; } = 600;
 
         #region Classic Specific Options
+        public bool DebugOpenCV { get; set; } = false;
+
         /// <summary>
         /// Path to template image file.
         /// </summary>
