@@ -14,8 +14,8 @@ namespace Fishman
         static int SuccessTries = 0; // including false-positives
         static int FailedTries = 0;
 
-        static double MinFishing = double.MaxValue;
-        static double MaxFishing = double.MinValue;
+        static double MinFishing = 0;
+        static double MaxFishing = 0;
 
         /// <summary>
         /// The amount of time spent on successful fishing.
@@ -37,7 +37,7 @@ namespace Fishman
                 SuccessTries++;
 
                 TotalTimeFishing += timeSpent;
-                if (timeSpent < MinFishing)
+                if (timeSpent < MinFishing || MinFishing == 0)
                     MinFishing = timeSpent;
                 else if (timeSpent > MaxFishing)
                     MaxFishing = timeSpent;
