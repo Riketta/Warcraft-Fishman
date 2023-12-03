@@ -255,20 +255,31 @@ namespace Fishman
         {
             logger.Debug("Waiting for bite");
 
+            var cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
             var task = Task.Run(() =>
             {
                 while (true)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        logger.Debug("Cancelling WaitForBite Bite Loop task.");
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
                     if (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
                         return true;
 
                     Thread.Sleep(30);
                 }
-            });
+            }, cancellationToken);
 
             if (!task.Wait(timeout))
             {
                 logger.Error("Bite wasn't detected: timeout occured");
+                cancellationTokenSource.Cancel();
+
                 return false;
             }
 

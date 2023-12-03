@@ -293,13 +293,22 @@ namespace Fishman
                                                       _options.DetectionRegion.Height);
             //logger.Debug("{0}x{1}", mousePosition.X, mousePosition.Y);
 
+            var cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
             var task = Task.Run(() =>
             {
                 logger.Debug("Bite loop");
-                
+
                 double value = 0;
                 while (true)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        logger.Debug("Cancelling WaitForBite Bite Loop task.");
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+
                     value = _frameProcessor.BiteDetection(detectionRegion);
                     if (value == 0)
                         continue;
@@ -328,10 +337,15 @@ namespace Fishman
 
                     //Thread.Sleep(1);
                 }
-            });
+            }, cancellationToken);
 
             if (!task.Wait(timeout))
+            {
                 logger.Error("Bite wasn't detected: timeout occured");
+                cancellationTokenSource.Cancel();
+                
+                return false;
+            }
 
             return state;
         }
