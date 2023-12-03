@@ -65,5 +65,10 @@ namespace Fishman
         /// For FullHD: 600 pixels. Value = Window.Height - (Window.Height / 2.25).
         /// </summary>
         int ScanRegionYMax { get; set; }
+
+        /// <summary>
+        /// Number of fishing attempts (first attempt plus retries in case of failed attempts) per iteration.
+        /// </summary>
+        int FishingAttemptsPerIteration { get; set; }
     }
 }

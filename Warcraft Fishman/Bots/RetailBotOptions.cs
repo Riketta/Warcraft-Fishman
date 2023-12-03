@@ -23,6 +23,8 @@ namespace Fishman
         public int ScanRegionYMin { get; set; } = 350;
         public int ScanRegionYMax { get; set; } = 600;
 
+        public int FishingAttemptsPerIteration { get; set; } = 5;
+
         #region Retail Specific Options
         #endregion
     }

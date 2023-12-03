@@ -24,6 +24,8 @@ namespace Fishman
         public int ScanRegionYMin { get; set; } = 350;
         public int ScanRegionYMax { get; set; } = 600;
 
+        public int FishingAttemptsPerIteration { get; set; } = 5;
+
         #region Classic Specific Options
         public bool DebugOpenCV { get; set; } = false;
 
