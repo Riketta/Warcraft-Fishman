@@ -307,7 +307,7 @@ namespace Fishman
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        logger.Debug("Cancelling WaitForBite Bite Loop task.");
+                        logger.Warn("[-] Cancelling a WaitForBite task.");
                         cancellationToken.ThrowIfCancellationRequested();
                     }
 
