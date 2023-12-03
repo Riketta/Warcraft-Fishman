@@ -1,0 +1,37 @@
+{
+    "Name": "Anti-AFK",
+    "Actions": [
+        {
+            "Description": "Holy Shield",
+            "Key": "N1",
+            "Trigger": "Fish",
+            "GCD": 1800,
+            "CastTime": 500,
+            "Interval": 0
+        },
+        {
+            "Description": "Judgement",
+            "Key": "E",
+            "Trigger": "Interval",
+            "GCD": 1800,
+            "Delay": 100,
+            "Interval": 8
+        },
+        {
+            "Description": "HotR",
+            "Key": "N2",
+            "Trigger": "Interval",
+            "GCD": 1800,
+            "Delay": 100,
+            "Interval": 6
+        },
+        {
+            "Description": "SoR",
+            "Key": "N4",
+            "Trigger": "Interval",
+            "GCD": 1800,
+            "Delay": 100,
+            "Interval": 6
+        }
+    ]
+}

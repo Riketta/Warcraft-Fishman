@@ -1,0 +1,35 @@
+{
+    "Name": "Wrath",
+    "Actions": [
+        {
+            "Description": "Fishing",
+            "Key": "N1",
+            "Trigger": "Fish",
+            "GCD": 250,
+            "CastTime": 15000,
+            "Interval": 0
+        },
+        {
+            "Description": "Bait",
+            "Key": "N2",
+            "Trigger": "Interval",
+            "Delay": 100,
+            "CastTime": 2050,
+            "Interval": 600
+        },
+        {
+            "Description": "Logout (3600 = 1 Hour)",
+            "Key": "N3",
+            "Trigger": "Interval",
+            "Delay": 0,
+            "CastTime": 5000,
+            "Interval": 10800
+        },
+        {
+            "Description": "Remove Trash",
+            "Key": "N6",
+            "Trigger": "Interval",
+            "Interval": 450
+        }
+    ]
+}

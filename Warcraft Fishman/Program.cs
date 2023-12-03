@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,27 +17,27 @@ namespace Fishman
 
         static void Main(string[] args)
         {
+            Console.CancelKeyPress += delegate { logger.Warn(Statistics.GetReport()); };
             LogManager.SetupLogger();
             logger.Info("{0} ver. {1}", BotName, Assembly.GetEntryAssembly().GetName().Version.ToString());
-            logger.Info("Author Riketta. Feedback: rowneg@bk.ru / https://github.com/riketta");
+            logger.Info("Author: Riketta. Feedback: https://github.com/riketta");
 
             Arguments arguments = null;
             var result = Parser.Default.ParseArguments<Arguments>(args).WithParsed(opts => arguments = opts);
 
-            if (arguments.IsDump)
+            var config = Config.Load(Config.DefaultConfigPath);
+
+            if (arguments.Dump)
             {
                 logger.Info("Launching in dump mode");
                 DeviceManager.DumpIconsLoop();
             }
 
-            if (arguments.IsSave)
+            if (arguments.Save)
             {
                 logger.Info("Saving default preset into file");
                 Preset.Default.Save();
             }
-
-            logger.Info("Loading cursors");
-            DeviceManager.LoadCursors();
 
             Preset preset = Preset.Default;
             if (string.IsNullOrEmpty(arguments.Preset))
@@ -47,17 +48,24 @@ namespace Fishman
                 preset = Preset.Load(arguments.Preset);
             }
 
-            logger.Info("Using bobber offset: {0}", arguments.Offset);
-            
             logger.Info("Ready to start fishing with selected preset: {0}", preset);
+            if (arguments.Classic)
+                logger.Info("Classic Bot will be used");
+            else
+                logger.Info("Retail Bot will be used");
             logger.Info("Press \"Enter\" to start");
             Console.ReadLine();
-            Bot fishman = new Bot(preset);
-            fishman.UseOffset = arguments.Offset;
-            fishman.FishingLoop();
+            IBot fishman;
+            if (arguments.Classic)
+            {
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High; // due to screen capture usage
+                fishman = new ClassicBot(preset, config.ClassicBotOptions);
+            }
+            else
+                fishman = new RetailBot(preset, config.RetailBotOptions);
+            fishman.Start();
 
             while (true);
         }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,32 +15,29 @@ namespace Fishman
 
         private static Random random = new Random();
 
-        public static readonly string IconFileDefault = "default.bmp";
-        public static readonly string IconFileFishhook = "fishhook.bmp";
-
-        public static Bitmap IconDefault;
-        public static Bitmap IconFishhook;
-
-        public static void LoadCursors()
+        public static Bitmap LoadCursor(string pathToCursorImage)
         {
-            IconDefault = Image.FromFile(IconFileDefault) as Bitmap;
-            IconFishhook = Image.FromFile(IconFileFishhook) as Bitmap;
+            Bitmap cursor = null;
+            if (File.Exists(pathToCursorImage))
+                cursor = Image.FromFile(pathToCursorImage) as Bitmap;
+            
+            return cursor;
         }
 
         public static Bitmap GetCurrentIcon()
         {
             Bitmap cursorIcon = null;
 
-            WinApi.CURSORINFO pci;
-            pci.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(WinApi.CURSORINFO));
+            Win32.CURSORINFO pci;
+            pci.cbSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Win32.CURSORINFO));
 
-            if (WinApi.GetCursorInfo(out pci))
+            if (Win32.GetCursorInfo(out pci))
             {
                 using (var icon = new Bitmap(32, 32))
                 {
                     using (Graphics g = Graphics.FromImage(icon))
-                        WinApi.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
-                    cursorIcon = new Bitmap(icon); // We have to "clone" icon because handle won't be released if we continue use it
+                        Win32.DrawIcon(g.GetHdc(), 0, 0, pci.hCursor);
+                    cursorIcon = new Bitmap(icon).Clone() as Bitmap; // We have to "clone" icon because handle won't be released if we continue use it
                 }
             }
 
@@ -53,16 +51,18 @@ namespace Fishman
 
             for (int x = 0; x < 5; x++)
                 for (int y = 0; y < 5; y++)
+                {
+                    //a.Save("a.ico", System.Drawing.Imaging.ImageFormat.Icon);
+                    //b.Save("b.ico", System.Drawing.Imaging.ImageFormat.Icon);
                     if (a.GetPixel(x, y) != b.GetPixel(x, y))
                         return false;
+                }
             return true;
         }
 
         public static void DumpIconsLoop()
         {
-            logger.Info("Infinity loop that saves current icon once per second");
-            logger.Info("Save default WoW icon as " + IconFileDefault);
-            logger.Info("Save fish-hook icon as " + IconFileFishhook);
+            logger.Info("Infinit loop that saves current icon once per second");
 
             int counter = 0;
             while (true)
@@ -79,22 +79,23 @@ namespace Fishman
         /// </summary>
         /// <param name="hWnd">Window handle to send key to</param>
         /// <param name="key">Key code</param>
-        public static void PressKey(IntPtr hWnd, WinApi.VirtualKeys key)
+        public static void PressKey(IntPtr hWnd, Win32.VirtualKeys key)
         {
-            WinApi.PostMessage(hWnd, WinApi.WM_KEYDOWN, (UInt32)key, IntPtr.Zero);
+            Win32.PostMessage(hWnd, Win32.WM_KEYDOWN, (UInt32)key, IntPtr.Zero);
             Thread.Sleep(50 + random.Next(-10, 35));
-            WinApi.PostMessage(hWnd, WinApi.WM_KEYUP, (UInt32)key, IntPtr.Zero);
+            Win32.PostMessage(hWnd, Win32.WM_KEYUP, (UInt32)key, IntPtr.Zero);
         }
 
         /// <summary>
-        /// Simulate left mouse button click
+        /// Simulate left or right mouse button click
         /// </summary>
         /// <param name="hWnd">Window handle to send key to</param>
-        public static void MouseClickLMB(IntPtr hWnd)
+        /// <param name="invert">Flag to use RMB instead of LMB</param>
+        public static void MouseClick(IntPtr hWnd, bool invert = false)
         {
-            WinApi.PostMessage(hWnd, WinApi.WM_LBUTTONDOWN, (UInt32)WinApi.VirtualKeys.LeftButton, IntPtr.Zero);
-            Thread.Sleep(50 + random.Next(-10, 10));
-            WinApi.PostMessage(hWnd, WinApi.WM_LBUTTONUP, (UInt32)WinApi.VirtualKeys.LeftButton, IntPtr.Zero);
+            Win32.mouse_event((invert ? Win32.MOUSEEVENTF_RIGHTDOWN : Win32.MOUSEEVENTF_LEFTDOWN), 0, 0, 0, UIntPtr.Zero);
+            Thread.Sleep(70 + random.Next(-12, 12));
+            Win32.mouse_event((invert ? Win32.MOUSEEVENTF_RIGHTUP : Win32.MOUSEEVENTF_LEFTUP), 0, 0, 0, UIntPtr.Zero);
         }
 
         public static Point GetMousePosition()
@@ -105,8 +106,17 @@ namespace Fishman
         public static void MoveMouse(Point position)
         {
             System.Windows.Forms.Cursor.Position = position;
-
         }
 
+        static public Color GetPixelColor(IntPtr hwnd, int x, int y)
+        {
+            IntPtr hdc = Win32.GetWindowDC(hwnd);
+            uint pixel = Win32.GetPixel(hdc, x, y);
+            Win32.ReleaseDC(hwnd, hdc);
+            Color color = Color.FromArgb((int)(pixel & 0x000000FF),
+                            (int)(pixel & 0x0000FF00) >> 8,
+                            (int)(pixel & 0x00FF0000) >> 16);
+            return color;
+        }
     }
 }

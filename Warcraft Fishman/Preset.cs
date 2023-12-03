@@ -20,7 +20,7 @@ namespace Fishman
         static Preset()
         {
             Default.Actions.Add(Action.Fish);
-            Default.Actions.Add(new Action() { Key = WinApi.VirtualKeys.N2, CastTime = 2000, Description = "Oversized Bobber", Trigger = Action.Event.Interval, Interval = 30 * 60 });
+            Default.Actions.Add(new Action() { Key = Win32.VirtualKeys.N2, CastTime = 2000, Description = "Oversized Bobber", Trigger = Action.Event.Interval, Interval = 30 * 60 });
         }
 
         /// <summary>
@@ -44,7 +44,12 @@ namespace Fishman
                 logger.Error("More than one fishing actions found!");
                 return false;
             }
-            
+            if (GetActions(Action.Event.Fish).Length == 0)
+            {
+                logger.Error("No fishing actions found!");
+                return false;
+            }
+
             // TODO: Key collision detection
 
             return true;
