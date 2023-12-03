@@ -20,7 +20,7 @@ namespace Fishman
             // ### FILE ###
             FileTarget logfile = new FileTarget()
             {
-                FileName = Path.Combine("logs", string.Format("{0}.txt", DateTime.Now.ToString("yyyyMMdd.HHmmss"))),
+                FileName = Path.Combine("logs", string.Format("{0}.txt", DateTime.Now.ToString("yyyyMMdd_HHmmss"))),
                 Name = "logfile",
                 KeepFileOpen = true,
                 ConcurrentWrites = false
