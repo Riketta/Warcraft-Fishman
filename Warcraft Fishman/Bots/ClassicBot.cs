@@ -280,13 +280,6 @@ namespace Fishman
             return bobber;
         }
 
-        /// <summary>
-        /// Loop that should be called after <see cref="FindBobber"/> with true result.
-        /// Waits for bite. Waits until bite or until timeout.
-        /// Use only with <see cref="Action.Event.Fish"/>.
-        /// </summary>
-        /// <param name="timeout">Timeout in milliseconds</param>
-        /// <returns>true if bite detected</returns>
         protected override bool WaitForBite(int timeout)
         {
             bool state = false;
