@@ -316,14 +316,14 @@ namespace Fishman
 
                     if (value > _options.MinThreshold && value < _options.MaxThreshold)
                     {
-                        if (_lastFrameDetectionState) // two frame validation
+                        if (_lastFrameDetectionState) // two frame validation, 2/2 frames in a row with a match found
                         {
                             _lastFrameDetectionState = false;
                             logger.Debug($"Match: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
 
                             return true;
                         }
-                        else
+                        else // the first frame (of two required ones) with the correct match was found
                         {
                             _lastFrameDetectionState = true;
                             continue;
