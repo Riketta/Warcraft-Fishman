@@ -109,15 +109,19 @@ namespace Fishman
                 logger.Info("Starting fishing");
                 try
                 {
+                    int remainingAttempts = _options.FishingAttemptsPerIteration;
                     bool success = false;
-                    while (!success)
+                    while (!success && remainingAttempts > 0)
                     {
                         DateTime fishingStarted = DateTime.Now;
                         success = Fishing(Preset.GetActions(Action.Event.Fish)[0]);
                         Statistics.AddTry(DateTime.Now.Subtract(fishingStarted).TotalSeconds, success);
 
                         if (!success)
-                            logger.Warn("Starting fishing again");
+                        {
+                            remainingAttempts--;
+                            logger.Warn($"Fishing attempt failed. Remaining attempts: {remainingAttempts}.");
+                        }
                     }
                 }
                 catch (Exception ex)
