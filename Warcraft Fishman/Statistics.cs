@@ -29,7 +29,7 @@ namespace Fishman
 
         public static void AddTry(double timeSpent, bool isSuccess)
         {
-            logger.Debug($"Time spent on last attempt: {timeSpent:F2} seconds");
+            logger.Debug($"Time spent on last attempt: {timeSpent:F2} seconds. Success: {isSuccess}.");
 
             TotalTries++;
             if (isSuccess && timeSpent > 3.0) // timeSpent includes all sleeps bot do during fishing try
