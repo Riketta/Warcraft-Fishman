@@ -282,8 +282,6 @@ namespace Fishman
 
         protected override bool WaitForBite(int timeout)
         {
-            bool state = false;
-            
             logger.Debug("Waiting for bite");
 
             Point mousePosition = DeviceManager.GetMousePosition();
@@ -320,11 +318,10 @@ namespace Fishman
                     {
                         if (_lastFrameDetectionState) // two frame validation
                         {
-                            state = true;
                             _lastFrameDetectionState = false;
                             logger.Debug($"Match: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]");
 
-                            break;
+                            return true;
                         }
                         else
                         {
@@ -347,7 +344,7 @@ namespace Fishman
                 return false;
             }
 
-            return state;
+            return false;
         }
         #endregion
     }
