@@ -348,7 +348,7 @@ namespace Fishman
                 return false;
             }
 
-            return false;
+            return task.Result;
         }
         #endregion
     }
