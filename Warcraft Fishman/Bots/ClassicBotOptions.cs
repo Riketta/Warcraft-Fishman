@@ -36,12 +36,14 @@ namespace Fishman
         public string PathToTemplate { get; set; } = "template_bobber_classic.png";
 
         /// <summary>
-        /// [0.12; 0.15] for full bobber tracking | [0.05; 0.10] for red feather tracking
+        /// Red feather tracking.
+        /// Idle: [0.380; 0.700].
+        /// Bite: [-0.250; 0.150]. On bad graphics [-0.250; 0.250] for a bite.
         /// </summary>
         public double MinThreshold { get; set; } = -0.25;
 
         /// <summary>
-        /// [0.20; 0.40] for full bobber tracking, 0.250 default | [0.08; 0.12] for red feather tracking
+        /// See <see cref="MinThreshold"/>.
         /// </summary>
         public double MaxThreshold { get; set; } = 0.15;
 
