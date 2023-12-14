@@ -28,6 +28,7 @@ namespace Fishman
 
         #region Classic Specific Options
         public bool DebugOpenCV { get; set; } = false;
+        public bool DebugWeight { get; set; } = false;
 
         /// <summary>
         /// Path to template image file.
