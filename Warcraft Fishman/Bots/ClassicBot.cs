@@ -39,6 +39,7 @@ namespace Fishman
         /// - Higher (or sometimes lower) quality water graphics can help increase the success rate of fishing attempts.
         /// - The higher your character is, the more to the right the fishing-line will be (so less overlap with the bobber).
         /// - Reducing the FPS on weak systems (e.g. with an integrated GPU) to 60-80 may help, and also set the water quality to "Fair".
+        /// - Increase "Contrast" to maximum.
         /// </summary>
         /// <param name="preset">Actions preset that should be used for fishing.</param>
         /// <param name="options">Set of options for this bot version.</param>
