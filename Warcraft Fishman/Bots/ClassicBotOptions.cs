@@ -38,19 +38,19 @@ namespace Fishman
         /// <summary>
         /// [0.12; 0.15] for full bobber tracking | [0.05; 0.10] for red feather tracking
         /// </summary>
-        public double MinThreshold { get; set; } = 0.050;
+        public double MinThreshold { get; set; } = -0.25;
 
         /// <summary>
         /// [0.20; 0.40] for full bobber tracking, 0.250 default | [0.08; 0.12] for red feather tracking
         /// </summary>
-        public double MaxThreshold { get; set; } = 0.095;
+        public double MaxThreshold { get; set; } = 0.15;
 
         /// <summary>
         /// The region in which template matching should work.
         /// The top left point (X and Y) must be relative to the cursor position.
         /// Should be approximately the size of the template image: <see cref="PathToTemplate"/>.
         /// </summary>
-        public Rectangle DetectionRegion { get; set; } = new Rectangle(-62, -20, 60, 20);
+        public Rectangle DetectionRegion { get; set; } = new Rectangle(-46, -10, 44, 12);
         #endregion
     }
 }
