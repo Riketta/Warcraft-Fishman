@@ -28,7 +28,16 @@ namespace Fishman
 
         #region Classic Specific Options
         public bool DebugOpenCV { get; set; } = false;
+
+        /// <summary>
+        /// If set to true: every tick match weight will be debug printed, at the end of attempt data with min/max weight ranges during attempt printed.
+        /// </summary>
         public bool DebugWeight { get; set; } = false;
+        
+        /// <summary>
+        /// If set to true for each fishing attempt CSV file with all weight data during attemp will be saved.
+        /// </summary>
+        public bool DebugCSV { get; set; } = false;
 
         /// <summary>
         /// Path to template image file.

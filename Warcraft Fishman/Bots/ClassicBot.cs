@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -237,7 +238,7 @@ namespace Fishman
             Thread.Sleep(_options.ScanningDelay);
             #endregion
             bobber.X = cursor.X;
-            
+
             #region Right Bound
             while (DeviceManager.CompareIcons(DeviceManager.GetCurrentIcon(), FishhookCursor))
             {
@@ -299,6 +300,12 @@ namespace Fishman
             var cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
+            double minValue = 1;
+            double maxValue = -1;
+            List<double> values = null;
+            if (_options.DebugWeight)
+                values = new List<double>(2000);
+
             var task = Task.Run(() =>
             {
                 logger.Debug("Bite loop");
@@ -315,6 +322,13 @@ namespace Fishman
                     value = _frameProcessor.BiteDetection(detectionRegion);
                     if (value == 0)
                         continue;
+
+                    if (_options.DebugWeight || _options.DebugCSV)
+                        values.Add(value);
+                    if (value < minValue)
+                        minValue = value;
+                    else if (value > maxValue)
+                        maxValue = value;
 
                     if ((value > _options.MinThreshold * 0.7 && value < _options.MaxThreshold * 1.5) || _options.DebugOpenCV || _options.DebugWeight)
                         logger.Debug($"Weight: {value:F3} [{_options.MinThreshold}/{_options.MaxThreshold}]; Prev frame was detected: {_lastFrameDetectionState}");
@@ -341,13 +355,49 @@ namespace Fishman
                 }
             }, cancellationToken);
 
-            if (!task.Wait(timeout))
+            bool isTimeout = !task.Wait(timeout);
+            if (isTimeout)
             {
-                logger.Error("Bite wasn't detected: timeout occured");
                 cancellationTokenSource.Cancel();
-                
-                return false;
+                logger.Error("Bite wasn't detected: timeout occured");
             }
+
+            // Save raw (not yet sorted and not modified) weight values as CSV-file.
+            if (_options.DebugCSV)
+            {
+                string fileName = $"{DateTime.Now.Ticks}.csv";
+                using (StreamWriter writer = new StreamWriter(fileName))
+                {
+                    writer.WriteLine("Frame,Weigh");
+                    for (int i = 0; i < values.Count; i++)
+                        writer.WriteLine($"{i + 1},{values[i]}");
+                }
+                logger.Debug($"Weight data saved as \"{fileName}\"");
+            }
+
+            logger.Debug($"Match Range (total): [{minValue:F3}; {maxValue:F3}]");
+            // Calculate filtered minimum and maximum values (without bite range).
+            if (_options.DebugWeight)
+            {
+                values.Sort();
+
+                int startIndex = values.Count - (int)(values.Count * 0.950);
+                if (startIndex < 0)
+                    startIndex = 0;
+                else if (startIndex >= values.Count)
+                    startIndex = values.Count - 1;
+
+                int endIndex = values.Count - 1;
+
+                logger.Debug($"> Entries: {values.Count}; Start Index: {startIndex}; End Index: {endIndex}.");
+                double minValueWithoutBite = values[startIndex];
+                double maxValueWithoutBite = values[endIndex];
+
+                logger.Debug($"Match Range (filtered): [{minValueWithoutBite:F3}; {maxValueWithoutBite:F3}]");
+            }
+
+            if (isTimeout)
+                return false;
 
             return task.Result;
         }
